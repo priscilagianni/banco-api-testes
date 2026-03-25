@@ -1,19 +1,13 @@
 const request = require('supertest');
 const { expect } = require('chai');
 require('dotenv').config();
+const {obterToken} = require('../helpers/autenticacao.js')
 
 describe('transferências', () => {
     describe('POST /transferencias', () => {
         it('Deve retornar sucesso com 201 quando o valor da transferencia for igual ou acima de R$ 10,00', async () => {
-            const responseLogin = await request(process.env.BASE_URL) // URL da API
-                   .post('/login')
-                   .set('Content-Type', 'application/json')
-                   .send({
-                     username: 'julio.lima',
-                     senha: '123456'
-                   })
-            const token = responseLogin.body.token
-           
+            const token = await obterToken('julio.lima', '123456')
+              
             const response = await request(process.env.BASE_URL)
             .post('/transferencias')
             .set('content-type', 'application/json')
@@ -26,19 +20,11 @@ describe('transferências', () => {
             })
 
             expect(response.status).to.equal(201);
-            console.log(response.body)
 
         })
 
          it('Deve retornar falha com 422 quando o valor da transferencia for abaixo de R$ 10,00', async () => {
-            const responseLogin = await request(process.env.BASE_URL) // URL da API
-                   .post('/login')
-                   .set('Content-Type', 'application/json')
-                   .send({
-                     username: 'julio.lima',
-                     senha: '123456'
-                   })
-            const token = responseLogin.body.token
+            const token = await obterToken('julio.lima', '123456')
            
             const response = await request(process.env.BASE_URL)
             .post('/transferencias')
